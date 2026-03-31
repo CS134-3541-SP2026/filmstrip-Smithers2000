@@ -25,22 +25,33 @@ import java.io.File
 import androidx.core.graphics.scale
 
 @Composable
-fun ScrapbookScreen(viewModel: ScrapbookViewModel,
-                    modifier: Modifier = Modifier) {
+fun ScrapbookScreen(
+    viewModel: ScrapbookViewModel,
+    modifier: Modifier = Modifier
+) {
     var selectedSlot by rememberSaveable { mutableStateOf<Int?>(null) }
 
     // todo: create a launcher
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview()
+    ) { image ->
+        image?.let {
+            viewModel.setPhoto(selectedSlot, it)
+        }
 
-    Column (
+    }
+
+    Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-    ){
+    ) {
         ScrapbookSlot(
             photo = viewModel.photo1,
             onClick = {
                 selectedSlot = 1
                 // todo: activate the launcher
+                cameraLauncher.launch(null)
             }
         )
     }
